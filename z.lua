@@ -122,6 +122,8 @@ Z_CMD = 'z'
 Z_MATCHMODE = 0
 Z_MATCHNAME = false
 Z_SKIPPWD = false
+Z_SCALE = 0.9
+Z_MIN = 0.001 -- don't forget paths so easily
 Z_HYPHEN = false
 
 os.LOG_NAME = os.getenv('_ZL_LOG_NAME')
@@ -1156,8 +1158,8 @@ function data_insert(M, filename)
 		local X = {}
 		for i = 1, #M do
 			local item = M[i]
-			item.rank = item.rank * 0.9
-			if item.rank >= 1.0 then
+			item.rank = item.rank * Z_SCALE
+			if item.rank >= Z_MIN then
 				table.insert(X, item)
 			end
 		end
@@ -1873,6 +1875,8 @@ function z_init()
 	local _zl_matchname = os.getenv('_ZL_MATCH_NAME')
 	local _zl_skippwd = os.getenv('_ZL_SKIP_PWD')
 	local _zl_matchmode = os.getenv('_ZL_MATCH_MODE')
+	local _zl_min = os.getenv('_ZL_MIN')
+	local _zl_scale = os.getenv('_ZL_SCALE')
 	local _zl_hyphen = os.getenv('_ZL_HYPHEN')
 	if _zl_data ~= nil and _zl_data ~= "" then
 		if windows then
@@ -1888,6 +1892,18 @@ function z_init()
 		_zl_maxage = tonumber(_zl_maxage)
 		if _zl_maxage ~= nil and _zl_maxage > 0 then
 			MAX_AGE = _zl_maxage
+		end
+	end
+	if _zl_min ~= nil and _zl_min ~= "" then
+		_zl_min = tonumber(_zl_min)
+		if _zl_min ~= nil and _zl_min > 0 and _zl_min <= 1.0 then
+			Z_MIN = _zl_min
+		end
+	end
+	if _zl_scale ~= nil and _zl_scale ~= "" then
+		_zl_scale = tonumber(_zl_scale)
+		if _zl_scale ~= nil and _zl_scale > 0 and _zl_scale <= 1.0 then
+			Z_SCALE = _zl_scale
 		end
 	end
 	if _zl_exclude ~= nil and _zl_exclude ~= "" then
